@@ -1,29 +1,44 @@
 import {
-  BadRequestException,
-  Body,
   Controller,
   Get,
   Post,
+  Body,
+  Param,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
+import { Book } from './books.service';
 
 @Controller('books')
 export class BooksController {
-  constructor(private readonly bookService: BooksService) {}
+  constructor(private readonly booksService: BooksService) {}
 
   @Get()
-  getAllBooks() {
-    return this.bookService.getAllBooks();
+  getBooks(): Book[] {
+    return this.booksService.getAllBooks();
   }
 
   @Post()
-  addBook(@Body() createBookDto: { title: string; author: string }) {
-    const { title, author } = createBookDto;
+  addBook(@Body() book: { title: string; author: string }): Book {
+    return this.booksService.addBook(book.title, book.author);
+  }
 
-    if (!title || !author) {
-      throw new BadRequestException('Title and author are required');
-    }
+  @Get(':id')
+  getBook(@Param('id') id: number): Book | null {
+    return this.booksService.getBookById(id);
+  }
 
-    return this.bookService.addBook(title, author);
+  @Put(':id')
+  updateBook(
+    @Param('id') id: number,
+    @Body() book: { title: string; author: string },
+  ): Book | null {
+    return this.booksService.updateBook(id, book.title, book.author);
+  }
+
+  @Delete(':id')
+  deleteBook(@Param('id') id: number): boolean {
+    return this.booksService.deleteBook(id);
   }
 }
