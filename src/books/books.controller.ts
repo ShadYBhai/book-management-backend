@@ -6,9 +6,12 @@ import {
   Param,
   Put,
   Delete,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Book } from './books.service';
+import { query } from 'express';
 
 @Controller('books')
 export class BooksController {
@@ -28,10 +31,15 @@ export class BooksController {
   getBook(@Param('id') id: number): Book | null {
     return this.booksService.getBookById(id);
   }
+  @Get('search')
+  searchBook(@Query('query') query: string) {
+    console.log('Received query:', query);
+    return this.booksService.searchBook(query);
+  }
 
   @Put(':id')
   updateBook(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() book: { title: string; author: string },
   ): Book | null {
     return this.booksService.updateBook(id, book.title, book.author);
