@@ -12,7 +12,7 @@ import {
 import { BooksService } from './books.service';
 import { Book } from './books.service';
 import { query } from 'express';
-import { CreateBookDto, UpdateBookDto } from './dto/create-book.dto';
+import { CreateBookDto } from './dto/create-book.dto';
 
 @Controller('books')
 export class BooksController {
@@ -24,8 +24,12 @@ export class BooksController {
   }
 
   @Post()
-  addBook(@Body() book: CreateBookDto): Book {
-    return this.booksService.addBook(book.title, book.author);
+  addBook(@Body() createBookDto: CreateBookDto): Book {
+    return this.booksService.addBook(
+      createBookDto.title,
+      createBookDto.author,
+      createBookDto.genre,
+    );
   }
 
   //   @Post():
@@ -53,7 +57,7 @@ export class BooksController {
   @Put(':id')
   updateBook(
     @Param('id', ParseIntPipe) id: number,
-    @Body() book: UpdateBookDto,
+    @Body() book: { title: string; author: string },
   ): Book | null {
     return this.booksService.updateBook(id, book.title, book.author);
   }
