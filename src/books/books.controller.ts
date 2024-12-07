@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Book } from './books.service';
-import { query } from 'express';
 import { CreateBookDto, UpdateBookDto } from './dto/create-book.dto';
 
 @Controller('books')
