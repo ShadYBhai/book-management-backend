@@ -19,7 +19,7 @@ export class BooksService {
   }
 
   async searchBook(query: string): Promise<Book[]> {
-    const trimmedQuery = query.trim().toLocaleLowerCase();
+    const trimmedQuery = query.trim().toLowerCase();
     if (!trimmedQuery) {
       return this.getAllBooks();
     }
@@ -36,7 +36,19 @@ export class BooksService {
   async getBookById(id: number): Promise<Book | null> {
     return this.bookModel.findById(id).exec();
   }
+  async updateBook(
+    id: string,
+    updateBookDto: UpdateBookDto,
+  ): Promise<Book | null> {
+    return this.bookModel
+      .findByIdAndUpdate(id, updateBookDto, { new: true }) // Update and return the updated book
+      .exec();
+  }
 
+  async deleteBook(id: number): Promise<boolean> {
+    const result = await this.bookModel.findByIdAndDelete(id).exec(); // Delete by ID
+    return result !== null; // Return true if a book was deleted, otherwise false
+  }
   // getAllBooks(): Book[] {
   //   return this.books;
   // }

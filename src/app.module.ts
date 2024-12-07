@@ -9,7 +9,6 @@ import { MongooseModule } from '@nestjs/mongoose';
     MongooseModule.forRoot(
       'mongodb+srv://ashishnickprivate:hnsXHcQNdom4Xtoz@cluster0.0oqqa.mongodb.net/',
     ),
-    ,
     BooksModule,
   ],
   controllers: [AppController],

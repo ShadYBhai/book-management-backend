@@ -1,3 +1,4 @@
+// src/books/books.controller.ts
 import {
   Controller,
   Get,
@@ -7,58 +8,45 @@ import {
   Put,
   Delete,
   Query,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { Book } from './books.service';
 import { CreateBookDto, UpdateBookDto } from './dto/create-book.dto';
+import { Book } from './schemas/book.schema';
 
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
   @Get()
-  getBooks(): Book[] {
-    return this.booksService.getAllBooks();
+  async getBooks(): Promise<Book[]> {
+    return this.booksService.getAllBooks(); // Return all books
   }
 
   @Post()
-  addBook(@Body() createBookDto: CreateBookDto): Book {
-    return this.booksService.addBook(createBookDto);
+  async addBook(@Body() createBookDto: CreateBookDto): Promise<Book> {
+    return this.booksService.addBook(createBookDto); // Add a new book
   }
-
-  //   @Post():
-  // This decorator maps this method to handle HTTP POST requests sent to /books.
-
-  // @Body():
-  // Extracts the body of the HTTP request and maps it to the createBookDto object.
-
-  // createBookDto: CreateBookDto:
-  // The incoming body must match the structure and validation rules defined in CreateBookDto. If the rules are violated, the server will throw a validation error.
-
-  // this.booksService.createBook(createBookDto):
-  // Passes the validated createBookDto to the service layer to handle the actual logic for creating a book.
 
   @Get(':id')
-  getBook(@Param('id') id: number): Book | null {
-    return this.booksService.getBookById(id);
+  async getBook(@Param('id') id: number): Promise<Book | null> {
+    return this.booksService.getBookById(id); // Get a book by its ID
   }
+
   @Get('search')
-  searchBook(@Query('query') query: string) {
-    console.log('Received query:', query);
-    return this.booksService.searchBook(query);
+  async searchBook(@Query('query') query: string): Promise<Book[]> {
+    return this.booksService.searchBook(query); // Search books by query
   }
 
   @Put(':id')
-  updateBook(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() upddateBookDto: UpdateBookDto,
-  ): Book | null {
-    return this.booksService.updateBook(id, upddateBookDto);
+  async updateBook(
+    @Param('id') id: string,
+    @Body() updateBookDto: UpdateBookDto,
+  ): Promise<Book | null> {
+    return this.booksService.updateBook(id, updateBookDto); // Update a book
   }
 
   @Delete(':id')
-  deleteBook(@Param('id') id: number): boolean {
-    return this.booksService.deleteBook(id);
+  async deleteBook(@Param('id') id: number): Promise<boolean> {
+    return this.booksService.deleteBook(id); // Delete a book
   }
 }
