@@ -12,6 +12,7 @@ import {
 import { BooksService } from './books.service';
 import { Book } from './books.service';
 import { query } from 'express';
+import { CreateBookDto, UpdateBookDto } from './dto/create-book.dto';
 
 @Controller('books')
 export class BooksController {
@@ -23,9 +24,21 @@ export class BooksController {
   }
 
   @Post()
-  addBook(@Body() book: { title: string; author: string }): Book {
+  addBook(@Body() book: CreateBookDto): Book {
     return this.booksService.addBook(book.title, book.author);
   }
+
+  //   @Post():
+  // This decorator maps this method to handle HTTP POST requests sent to /books.
+
+  // @Body():
+  // Extracts the body of the HTTP request and maps it to the createBookDto object.
+
+  // createBookDto: CreateBookDto:
+  // The incoming body must match the structure and validation rules defined in CreateBookDto. If the rules are violated, the server will throw a validation error.
+
+  // this.booksService.createBook(createBookDto):
+  // Passes the validated createBookDto to the service layer to handle the actual logic for creating a book.
 
   @Get(':id')
   getBook(@Param('id') id: number): Book | null {
@@ -40,7 +53,7 @@ export class BooksController {
   @Put(':id')
   updateBook(
     @Param('id', ParseIntPipe) id: number,
-    @Body() book: { title: string; author: string },
+    @Body() book: UpdateBookDto,
   ): Book | null {
     return this.booksService.updateBook(id, book.title, book.author);
   }
