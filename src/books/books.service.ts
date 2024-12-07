@@ -130,23 +130,31 @@ export class BooksService {
     return this.books.find((book) => book.id === id) || null;
   }
 
-  updateBook(id: number, updateBook: UpdateBookDto): Book | null {
+  updateBook(id: number, updateBookDto: UpdateBookDto): Book | null {
     const book = this.getBookById(id);
 
     if (book) {
-      const { title, author, genre } = updateBook;
-      if (title) book.title = title;
-      if (author) book.author = author;
-      if (genre) book.genre = genre;
+      const { title, author, genre } = updateBookDto;
+
+      // Update fields only if provided in the DTO
+      if (title !== undefined) book.title = title;
+      if (author !== undefined) book.author = author;
+      if (genre !== undefined) book.genre = genre;
+
       return book;
     }
 
-    return null; //IF NO BOOK WAS FOUND
+    return null; // Return null if no book was found
   }
 
   deleteBook(id: number): boolean {
-    const initialLength = this.books.length;
-    this.books = this.books.filter((book) => book.id !== id);
-    return this.books.length < initialLength;
+    const index = this.books.findIndex((book) => book.id === id);
+
+    if (index !== -1) {
+      this.books.splice(index, 1);
+      return true;
+    }
+
+    return false;
   }
 }
