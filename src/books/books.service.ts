@@ -136,7 +136,6 @@ export class BooksService {
     if (book) {
       const { title, author, genre } = updateBookDto;
 
-      // Update fields only if provided in the DTO
       if (title !== undefined) book.title = title;
       if (author !== undefined) book.author = author;
       if (genre !== undefined) book.genre = genre;
