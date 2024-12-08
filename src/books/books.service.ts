@@ -3,7 +3,7 @@ import { CreateBookDto, UpdateBookDto } from './dto/create-book.dto';
 import { title } from 'process';
 import { InjectModel } from '@nestjs/mongoose';
 import { Book } from './schemas/book.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class BooksService {
@@ -33,19 +33,35 @@ export class BooksService {
       .exec();
   }
 
-  async getBookById(id: number): Promise<Book | null> {
+  async getBookById(id: string): Promise<Book | null> {
     return this.bookModel.findById(id).exec();
   }
   async updateBook(
-    id: string,
+    bookId: Types.ObjectId,
     updateBookDto: UpdateBookDto,
   ): Promise<Book | null> {
-    return this.bookModel
-      .findByIdAndUpdate(id, updateBookDto, { new: true }) // Update and return the updated book
-      .exec();
-  }
+    try {
+      const updatedBook = await this.bookModel.findByIdAndUpdate(
+        bookId,
+        updateBookDto,
+        {
+          new: true, // Return updated document
+          runValidators: true, // Run validation rules
+        },
+      );
 
-  async deleteBook(id: number): Promise<boolean> {
+      if (!updatedBook) {
+        throw new Error('Book not found');
+      }
+
+      console.log(`Book updated: ${updatedBook._id}`); // Log updated book details (optional)
+      return updatedBook;
+    } catch (error) {
+      console.error('Error updating book:', error);
+      throw new Error('Could not update the book');
+    }
+  }
+  async deleteBook(id: string): Promise<boolean> {
     const result = await this.bookModel.findByIdAndDelete(id).exec(); // Delete by ID
     return result !== null; // Return true if a book was deleted, otherwise false
   }

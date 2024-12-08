@@ -12,6 +12,7 @@ import {
 import { BooksService } from './books.service';
 import { CreateBookDto, UpdateBookDto } from './dto/create-book.dto';
 import { Book } from './schemas/book.schema';
+import { Types } from 'mongoose';
 
 @Controller('books')
 export class BooksController {
@@ -28,7 +29,7 @@ export class BooksController {
   }
 
   @Get(':id')
-  async getBook(@Param('id') id: number): Promise<Book | null> {
+  async getBook(@Param('id') id: string): Promise<Book | null> {
     return this.booksService.getBookById(id); // Get a book by its ID
   }
 
@@ -42,11 +43,17 @@ export class BooksController {
     @Param('id') id: string,
     @Body() updateBookDto: UpdateBookDto,
   ): Promise<Book | null> {
-    return this.booksService.updateBook(id, updateBookDto); // Update a book
+    // Check if the id is present and valid
+    if (!id || !Types.ObjectId.isValid(id)) {
+      throw new Error('Invalid or missing ObjectId');
+    }
+
+    const bookId = new Types.ObjectId(id); // Create ObjectId from string
+    return this.booksService.updateBook(bookId, updateBookDto); // Pass valid ObjectId to the service
   }
 
   @Delete(':id')
-  async deleteBook(@Param('id') id: number): Promise<boolean> {
+  async deleteBook(@Param('id') id: string): Promise<boolean> {
     return this.booksService.deleteBook(id); // Delete a book
   }
 }
